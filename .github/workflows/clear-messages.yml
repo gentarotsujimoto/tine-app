@@ -1,0 +1,27 @@
+name: Clear Chat Messages
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: '"delete" と入力して確認'
+        required: true
+
+jobs:
+  clear:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'delete'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Delete all messages
+        run: node scripts/clear-messages.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
