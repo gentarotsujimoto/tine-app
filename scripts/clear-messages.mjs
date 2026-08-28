@@ -1,6 +1,11 @@
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+  console.error("エラー: FIREBASE_SERVICE_ACCOUNT シークレットが設定されていません");
+  process.exit(1);
+}
+
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 initializeApp({ credential: cert(serviceAccount) });
