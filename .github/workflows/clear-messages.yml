@@ -2,6 +2,9 @@ name: Clear Chat Messages
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * *'   # 18:00 JST
+    - cron: '0 13 * * *'  # 22:00 JST
 
 jobs:
   clear:
