@@ -3,11 +3,7 @@ export interface AuthenticatedUser {
 }
 
 export interface AuthRepository {
-  signInAnonymously(): Promise<AuthenticatedUser>;
+  signInWithEmailAndPassword(email: string, password: string): Promise<AuthenticatedUser>;
 
-  /**
-   * Subscribes to authentication state changes.
-   * Returns an unsubscribe function.
-   */
   onAuthStateChanged(callback: (uid: string | null) => void): () => void;
 }

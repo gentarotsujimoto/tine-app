@@ -1,15 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import type { Message } from "@/domain/entities/message";
+import { auth } from "@/infrastructure/firebase/firebase-client";
 import {
-  signInAnonymouslyUseCase,
   subscribeToMessagesUseCase,
   sendMessageUseCase,
 } from "@/infrastructure/config/container";
 
-function generateDisplayName(uid: string): string {
-  return `ゲスト${uid.slice(0, 4).toUpperCase()}`;
+function toDisplayName(email: string): string {
+  return email.split("@")[0];
 }
 
 interface UseChatResult {
@@ -27,18 +28,13 @@ export function useChat(roomId: string): UseChatResult {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-
-    signInAnonymouslyUseCase.execute().then(({ uid: newUid }) => {
-      if (cancelled) return;
-      setUid(newUid);
-      setDisplayName(generateDisplayName(newUid));
-      setIsReady(true);
+    return onAuthStateChanged(auth, (user) => {
+      if (user?.email) {
+        setUid(user.uid);
+        setDisplayName(toDisplayName(user.email));
+        setIsReady(true);
+      }
     });
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   useEffect(() => {

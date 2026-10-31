@@ -3,19 +3,23 @@
 import { useState, FormEvent } from "react";
 
 interface LoginFormProps {
-  onLogin: (username: string, password: string) => boolean;
+  onLogin: (email: string, password: string) => Promise<boolean>;
 }
 
 export function LoginForm({ onLogin }: LoginFormProps) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const success = onLogin(username, password);
+    setIsSubmitting(true);
+    setError("");
+    const success = await onLogin(email, password);
     if (!success) {
-      setError("ユーザー名またはパスワードが正しくありません");
+      setError("メールアドレスまたはパスワードが正しくありません");
+      setIsSubmitting(false);
     }
   }
 
@@ -27,16 +31,16 @@ export function LoginForm({ onLogin }: LoginFormProps) {
         </h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="username" className="text-sm font-medium text-gray-700">
-              ユーザー名
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              メールアドレス
             </label>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="username"
+              autoComplete="email"
               className="rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
             />
           </div>
@@ -59,9 +63,10 @@ export function LoginForm({ onLogin }: LoginFormProps) {
           )}
           <button
             type="submit"
-            className="rounded-md bg-emerald-600 py-2 text-sm font-semibold text-white hover:bg-emerald-700 active:bg-emerald-800"
+            disabled={isSubmitting}
+            className="rounded-md bg-emerald-600 py-2 text-sm font-semibold text-white hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-50"
           >
-            ログイン
+            {isSubmitting ? "ログイン中..." : "ログイン"}
           </button>
         </form>
       </div>

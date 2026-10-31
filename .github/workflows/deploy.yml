@@ -28,9 +28,6 @@ jobs:
       - run: npm ci
 
       - run: npm run build
-        env:
-          NEXT_PUBLIC_APP_USERNAME: ${{ secrets.APP_USERNAME }}
-          NEXT_PUBLIC_APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

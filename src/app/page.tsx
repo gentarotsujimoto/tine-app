@@ -16,7 +16,7 @@ export default function Home() {
   }
 
   if (!isAuthenticated) {
-    return <LoginForm onLogin={login} />;
+    return <LoginForm onLogin={(email, password) => login(email, password)} />;
   }
 
   return <ChatRoom roomId="general" />;
